@@ -1,0 +1,544 @@
+<!doctype html>
+<html
+  dir="ltr"
+  lang="en"
+  data-theme="dark"
+  
+    class="html theme--dark"
+  
+><head>
+  <meta charset="utf-8" />
+  <title>
+    S0S4
+        |
+        ELF Relocations
+      
+
+    
+
+  </title>
+
+  <meta name="generator" content="Hugo 0.101.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="author" content="S0S4" />
+  <meta
+    name="description"
+    content="Ideas &amp; Stuff"
+  />
+  
+  
+    
+    
+    <link
+      rel="stylesheet"
+      href="/scss/main.min.1cac29897bb941adf4246700acb99deffbfdf35a02ffc4ae81484456ebe430c3.css"
+      integrity="sha256-HKwpiXu5Qa30JGcArLmd7/v981oC/8SugUhEVuvkMMM="
+      crossorigin="anonymous"
+      type="text/css"
+    />
+  
+
+  
+  <link
+    rel="stylesheet"
+    href="/css/markupHighlight.min.73ccfdf28df555e11009c13c20ced067af3cb021504cba43644c705930428b00.css"
+    integrity="sha256-c8z98o31VeEQCcE8IM7QZ688sCFQTLpDZExwWTBCiwA="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  
+  <link
+    rel="stylesheet"
+    href="/fontawesome/css/fontawesome.min.137b1cf3cea9a8adb7884343a9a5ddddf4280f59153f74dc782fb7f7bf0d0519.css"
+    integrity="sha256-E3sc886pqK23iENDqaXd3fQoD1kVP3TceC&#43;3978NBRk="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  <link
+    rel="stylesheet"
+    href="/fontawesome/css/solid.min.e65dc5b48fb5f39b142360c57c3a215744c94e56c755c929cc3e88fe12aab4d3.css"
+    integrity="sha256-5l3FtI&#43;185sUI2DFfDohV0TJTlbHVckpzD6I/hKqtNM="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  <link
+    rel="stylesheet"
+    href="/fontawesome/css/regular.min.6f4f16d58da1c82c0c3a3436e021a3d39b4742f741192c546e73e947eacfd92f.css"
+    integrity="sha256-b08W1Y2hyCwMOjQ24CGj05tHQvdBGSxUbnPpR&#43;rP2S8="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  <link
+    rel="stylesheet"
+    href="/fontawesome/css/brands.min.e10425ad768bc98ff1fb272a0ac8420f9d1ba22f0612c08ff1010c95080ffe7e.css"
+    integrity="sha256-4QQlrXaLyY/x&#43;ycqCshCD50boi8GEsCP8QEMlQgP/n4="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+
+  <link rel="canonical" href="https://s0s4.github.io/posts/elfrealoc/" />
+
+  
+  
+  
+  
+  <script
+    type="text/javascript"
+    src="/js/anatole-header.min.f9132794301a01ff16550ed66763482bd848f62243d278f5e550229a158bfd32.js"
+    integrity="sha256-&#43;RMnlDAaAf8WVQ7WZ2NIK9hI9iJD0nj15VAimhWL/TI="
+    crossorigin="anonymous"
+  ></script>
+
+  
+    
+    
+    <script
+      type="text/javascript"
+      src="/js/anatole-theme-switcher.min.d6d329d93844b162e8bed1e915619625ca91687952177552b9b3e211014a2957.js"
+      integrity="sha256-1tMp2ThEsWLovtHpFWGWJcqRaHlSF3VSubPiEQFKKVc="
+      crossorigin="anonymous"
+    ></script>
+  
+
+  
+
+  
+
+
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="ELF Relocations"/>
+<meta name="twitter:description" content="In this post we&rsquo;re going to explore how linkers do relocations, why this are needed, how ELF helps with this process among very other things."/>
+
+
+
+  
+  <meta property="og:title" content="ELF Relocations" />
+<meta property="og:description" content="In this post we&rsquo;re going to explore how linkers do relocations, why this are needed, how ELF helps with this process among very other things." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://s0s4.github.io/posts/elfrealoc/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-08-29T19:12:26+02:00" />
+<meta property="article:modified_time" content="2024-08-29T19:12:26+02:00" /><meta property="og:site_name" content="S0S4 Blog" />
+
+
+
+
+  
+  
+  
+  
+  <script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "articleSection": "posts",
+        "name": "ELF Relocations",
+        "headline": "ELF Relocations",
+        "alternativeHeadline": "",
+        "description": "
+      
+        In this post we\u0026rsquo;re going to explore how linkers do relocations, why this are needed, how ELF helps with this process among very other things.
+
+
+      
+
+
+    ",
+        "inLanguage": "en-us",
+        "isFamilyFriendly": "true",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/s0s4.github.io\/posts\/elfrealoc\/"
+        },
+        "author" : {
+            "@type": "Person",
+            "name": "S0S4"
+        },
+        "creator" : {
+            "@type": "Person",
+            "name": "S0S4"
+        },
+        "accountablePerson" : {
+            "@type": "Person",
+            "name": "S0S4"
+        },
+        "copyrightHolder" : {
+            "@type": "Person",
+            "name": "S0S4"
+        },
+        "copyrightYear" : "2024",
+        "dateCreated": "2024-08-29T19:12:26.00Z",
+        "datePublished": "2024-08-29T19:12:26.00Z",
+        "dateModified": "2024-08-29T19:12:26.00Z",
+        "publisher":{
+            "@type":"Organization",
+            "name": "S0S4",
+            "url": "https://s0s4.github.io/",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/s0s4.github.io\/favicon-32x32.png",
+                "width":"32",
+                "height":"32"
+            }
+        },
+        "image": 
+      [
+      ]
+
+    ,
+        "url" : "https:\/\/s0s4.github.io\/posts\/elfrealoc\/",
+        "wordCount" : "1707",
+        "genre" : [ ],
+        "keywords" : [ ]
+    }
+  </script>
+
+
+</head>
+<body class="body">
+    <div class="wrapper">
+      <aside
+        
+          class="wrapper__sidebar"
+        
+      ><div
+  class="sidebar
+    animated fadeInDown
+  "
+>
+  <div class="sidebar__content">
+    <div class="sidebar__introduction">
+      <img
+        class="sidebar__introduction-profileimage"
+        src="https://avatars.githubusercontent.com/u/71514685?v=4"
+        alt="profile picture"
+      />
+      
+        <div class="sidebar__introduction-title">
+          <a href="/">S0S4 Blog</a>
+        </div>
+      
+      <div class="sidebar__introduction-description">
+        <p>Ideas & Stuff</p>
+      </div>
+    </div>
+    <ul class="sidebar__list">
+      
+        <li class="sidebar__list-item">
+          <a
+            href="https://www.linkedin.com/in/ivanredondosec/"
+            target="_blank"
+            rel="noopener me"
+            aria-label="Linkedin"
+            title="Linkedin"
+          >
+            <i class="fab fa-linkedin fa-2x" aria-hidden="true"></i>
+          </a>
+        </li>
+      
+        <li class="sidebar__list-item">
+          <a
+            href="https://www.twitter.com/s0sinh4"
+            target="_blank"
+            rel="noopener me"
+            aria-label="Twitter"
+            title="Twitter"
+          >
+            <i class="fab fa-twitter fa-2x" aria-hidden="true"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div><footer class="footer footer__sidebar">
+  <ul class="footer__list">
+    <li class="footer__item">
+      &copy;
+      
+        S0S4
+        2024
+      
+    </li>
+    
+  </ul>
+</footer>
+  
+  <script
+    type="text/javascript"
+    src="/js/medium-zoom.min.1248fa75275e5ef0cbef27e8c1e27dc507c445ae3a2c7d2ed0be0809555dac64.js"
+    integrity="sha256-Ekj6dSdeXvDL7yfoweJ9xQfERa46LH0u0L4ICVVdrGQ="
+    crossorigin="anonymous"
+  ></script></div>
+</aside>
+      <main
+        
+          class="wrapper__main"
+        
+      >
+        <header class="header"><div
+  class="
+    animated fadeInDown
+  "
+>
+  <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
+    <span aria-hidden="true" class="navbar-burger__line"></span>
+    <span aria-hidden="true" class="navbar-burger__line"></span>
+    <span aria-hidden="true" class="navbar-burger__line"></span>
+  </a>
+  <nav class="nav">
+    <ul class="nav__list" id="navMenu">
+      
+      
+        
+        
+          <li class="nav__list-item">
+            
+            <a
+              
+              href="/"
+              
+              title=""
+              >Home</a
+            >
+          </li>
+        
+
+      
+        
+        
+          <li class="nav__list-item">
+            
+            <a
+              
+              href="/post/"
+              
+              title=""
+              >Posts</a
+            >
+          </li>
+        
+
+      
+        
+        
+          <li class="nav__list-item">
+            
+            <a
+              
+              href="/about/"
+              
+              title=""
+              >About</a
+            >
+          </li>
+        
+
+      
+    </ul>
+    <ul class="nav__list nav__list--end">
+      
+      
+        <li class="nav__list-item">
+          <div class="themeswitch">
+            <a title="Switch Theme">
+              <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a>
+          </div>
+        </li>
+      
+    </ul>
+  </nav>
+</div>
+</header>
+  <div
+    class="post 
+      animated fadeInDown
+    "
+  >
+    
+    <div class="post__content">
+      
+        <h1>ELF Relocations</h1>
+      
+      <p>In this post we&rsquo;re going to explore how linkers do relocations, why this are needed, how ELF helps with this process among very other things.</p>
+<h1 id="generating-executables">Generating Executables</h1>
+<p>In this post we are interested in linking, the last step between having a chunk of code and a executable. Before we deep into linkers, I&rsquo;ll briefly explain how we go from source code to the final executable.</p>
+<p><img src="../elfrealocimg/th-4157004306.jpg" alt="Phases"></p>
+<h2 id="preprocessing">Preprocessing</h2>
+<p>The preprocessor handles the preprocessor directives, and expand them, for example, replacing the <code>#include</code> directives with the content of the respective file, expanding macros, and selecting differents portions of text depending of <code>if</code>,<code>ifdef</code>,<code>ifndef</code>, it also removes comments.</p>
+<p>Let&rsquo;s see it on action, I wrote a basic program for you to see how the preprocessor works. for this I used: <code>gcc -E main</code> which makes GCC stop just after the preprocessing step.</p>
+<p><img src="../elfrealocimg/preprocessingcode.png" alt="code"></p>
+<p>As you can see very basic code, with a comment, and a defined macro, let&rsquo;s compile it and see the output:</p>
+<p><img src="../elfrealocimg/preprocessoutput.png" alt="output"></p>
+<p>As you can see our macro has been expanded, the comment removed. This is just the tail of the file, the full file is 746 lines long, as it has to literally include the include directive.</p>
+<p>The preprocessor works on a stream of preprocessing tokens. Macro substitution is basically replacen tokens with other tokens. After all this work the preprocessor generates a output like the seen before, in which he make a stream of tokens resulting from the transformations described above. It also adds some special markers to tell the compiler where each line came from.</p>
+<p><img src="../elfrealocimg/preprocessortokens.png" alt="tokens"></p>
+<h2 id="compilation">Compilation</h2>
+<p><em>Keep in mind that the compilation process is complex and extensive, and this is just a highly simplified overview.</em></p>
+<p>Compilation is the second step in our code to executable process. The compiler transform our preprocessed code into assembly code through the following steps:</p>
+<h3 id="lexical-analyis">Lexical Analyis</h3>
+<p>In this phase the compiler splits the source(stream of characters) into fragments known as lexemes.</p>
+<pre><code>Example:
+
+char *str = &quot;hello&quot;;
+</code></pre>
+<p>In the above statement we have 6 lexemes:</p>
+<pre><code>1. char
+2. *
+3. str
+4. =
+5. &quot;hello&quot;
+6. ;
+</code></pre>
+<p>When the code(character stream) has been split into lexemes, we now have a <code>token stream</code>.</p>
+<p>A token it&rsquo;s made up of two parts: the <code>token's name</code>, basically it&rsquo;s a symbol that tells the syntax analyser the kind of lexical unit the lexeme is,such it&rsquo;s a keyword, a variable name, etc, and the <code>attribute value</code> (optional) which points to an entry in the symbol table for this token, it&rsquo;s needed when the token represents something that can vary or needs extra information for being processed correctly.</p>
+<pre tabindex="0"><code>Token           Lexemes
+
+if              if
+else            else
+comparison      &lt;=, &gt;=
+id              pi,variable
+number          3.141519, 0
+literal         &#34;test&#34;
+assignment      =
+</code></pre><p>Practical example:</p>
+<pre tabindex="0"><code>                value = data * 2
+
+This characters would be group into this lexemes, and mapped into the following tokens:
+
+1 - value: It would be mapped to the token (id,1) where token is the symbol, and 1 it&#39;s the attribute value that points to the symbol table entry.
+
+2 - The = symbol: Would be mapped into the token (=). This token doesn&#39;t vary, and so there&#39;s no need for a attribute value.
+
+3 -  data: Maps into (id,2).
+
+4 - the * symbol: Maps into (*).
+
+5 - Number 2: Maps into (number,3).
+
+And so we are left with:
+
+(id,1) (=) (id,2) (*) (number,3)
+</code></pre><h3 id="syntax-analysis">Syntax Analysis</h3>
+<p>In this step of the compiling process the syntax analyser or parser takes the output from the lexical analyser and creates a tree representation that depicts the grammatical structure of the token stream. Each interior node represents an operation and the children node represents the arguments of the operation.</p>
+<pre tabindex="0"><code>        (id,1)(=)(id,2)(*)(number,3)
+
+
+      = 
+     /  \    
+ (id,1)  *
+       /   \
+    (id,2) (number,3)
+             
+</code></pre><h3 id="semantic-analysis">Semantic Analysis</h3>
+<p>Semantic analysis uses the syntax tree generated by the parser to verify the semantic consistency of the source program with the language definition. It also performs type checking to ensure that each operator has matching operands.</p>
+<h3 id="intermediate-code-generation">Intermediate Code Generation</h3>
+<p>In the compiling process, the compiler may produce one or more intermediate representations. For example, the syntax tree we saw before, compilers may create a low level intermediate representation which should be easy to produce and easy to translate to machine langague, there are lots of intermediate forms but the most common are: Three address code, Postfix Notation and Syntax Trees.</p>
+<h3 id="code-generation">Code Generation</h3>
+<p>We jumped over the Code Optimization process, but you can guess what it does: improve the intermediate code. This step is hard to understand and more to implement, and so we&rsquo;ll not be talking about it.</p>
+<p>The generator takes the intermediate representation as input and maps it into the target language. If the target language is machine code, the registers or memory locations are selected for each of the variables used by the program, the intermediate instructions are translated into sequences of machine instructions that perform the same task</p>
+<h3 id="symbol-table-management">Symbol Table Management</h3>
+<p>The compiler records the variables names and collect information about the attributes of each name, and &ldquo;save&rdquo; it into a Symbol Table.</p>
+<p>The attributes may provide information about the storage allocated for a name, type, scope, and in the case of procedure names, the number and types of the arguments, the method of passing each argument, type returned, etc.</p>
+<p>At the end of the compilation process we should have something like:</p>
+<p><img src="../elfrealocimg/disas.png" alt="disas"></p>
+<h2 id="assembler">Assembler</h2>
+<p>In the assembler we&rsquo;ll transform the &ldquo;bare&rdquo; assembly to an object file. It does this by generating instructions evaluationg the symbols and literals to produce machine code.</p>
+<p>Assemblers have to flavours:</p>
+<ul>
+<li>
+<p>Single-Pass Assembler: When assemblers does all the work with just one scan it&rsquo;s called single-pass</p>
+</li>
+<li>
+<p>Two-Pass Assembler: Based on the name you guess what this does lol.</p>
+</li>
+</ul>
+<p><strong>How does Two Pass Assembler Work?</strong></p>
+<p>In the first pass, it reads the entire source, looking for label definitions. All labes are collected, assigned values and stored into the symbol table in this pass, also, in this first pass, the assembler has find the size of the instruction, this will really depend on architecture, but now a days it&rsquo;s common that the size is specified by the opcode and operands, because of this, the assembler has to work hard in this first pass just to determine the size of the instructions.</p>
+<p>All the information gathered in the first pass is saved into a <code>intermediate file</code> . Each record of the intermediate file contains a copy of a source line plus all the information that has been collected about that line. At the end of the first pass the source is closed and now the assembler will work with this intermediate file.</p>
+<pre tabindex="0"><code>Typical record in a intermediate file
+
+Record type: Instruction, directive, comment, invalid line.
+
+LC value for the line: Contains the memory address in which the next instruction will be stored.
+
+Pointer to a entry in the OpCode Table. The second pass will use this to locate the information.
+
+Copy of the source line: This is needed for the final listing.
+</code></pre><p>In the second pass the intermediate file will be read, and now the assembler will assemble the instructions and write the object instruction into the object file.</p>
+<p>TERMINAR ESTO</p>
+<p>HABLAR SOBRE LOS ASSEMBLERS DE UNA PASADA</p>
+<p><a href="https://www.lurklurk.org/linkers/linkers.html#objfile">https://www.lurklurk.org/linkers/linkers.html#objfile</a> -&gt; Coger lo del object file</p>
+<h2 id="linking-process">Linking Process</h2>
+<p>Finally we get here, the linking process, the last step to convert our source into a executable.</p>
+<p>The work of the linker is simple, <code>bind abstract names to concrete names</code> , with this I mean, a programmer can write the name printf, and the linker will bind it to &ldquo;the location X from the beggining of the executable code in stdio&rdquo;.</p>
+<p>The linker recieves input files, each of this files contains segments which is just chunks of code or data to be placed in the output file, each file also has at least one symbol table.</p>
+<p>When the linker runs, it scans the input files to find the sizes of the segments and to collect the definitions and references of all the symbols. It creates a segment table as well as a symbol table.</p>
+<p>Using this data, the linker determine which direction the symbol will be assign, adjust the memory addresses in the code and data segments and write the relocated code to the output file, it&rsquo;s normal that this output file contains a symbol table for relinking or debugging.</p>
+<p>When the assembler generates the object file, it generates the code using unrelocated addresses of code and data, it usually use zeros. The linker modifies the object code to reflect the actual addresses assigned.</p>
+<p>This is the look of a imported symbol from a file before static linking process:</p>
+<p><img src="../elfrealocimg/disasmain.png" alt="disas"></p>
+<p>As you can see it is moving zeroes, as it doesn&rsquo;t know the address.</p>
+<p><img src="../elfrealocimg/readelf.png" alt="readelf"></p>
+<p>But after linking we resolve it:</p>
+<p><img src="../elfrealocimg/bsymbol.png" alt="symbol"></p>
+<h3 id="static-vs-dynamic">Static VS Dynamic</h3>
+<p>We&rsquo;ll start with the static, as I think it&rsquo;s the easier to understand.</p>
+<p>Static linking consists of the linker copying all the dependencies into a final executable, this means that our new executable will have our code and the code of the libraries it invokes, as simple as that, this makes our executable heavier but it let us run a standalone binary.</p>
+<p>In dynamic linking we copy the names of the external libraries into our executable as unresolved symbols.</p>
+<h3 id="how-does-elf-enter-into-play-here">How does ELF enter into play here?</h3>
+<p>The ELF sections hold the bulk information of the object file for the linking process: instructions, data, relocation, etc.</p>
+<p>As you may know there are lot&rsquo;s of section types, but we&rsquo;re diving deep into the types of the common sections in a ELF <code>SHT_RELA</code> and <code>SHT_REL</code>.</p>
+<p>SHT_RELA: This section holds relocation entries with a explicit addend, this is the structure that every entry has:</p>
+<pre tabindex="0"><code>typedef struct {
+	Elf32_Addr	r_offset; // Gives the location of where to apply the relocation 
+	Elf32_Word	r_info; // Combines the type of relocation with the symbol that is associated
+	Elf32_Sword	r_addend; // Constant Value used for address calculation, or for the final value used in r_offset.
+} Elf32_Rela;
+</code></pre><p>SHT_REL: The same as SHT_RELA but without the addend:</p>
+<pre tabindex="0"><code>typedef struct {
+	Elf32_Addr	r_offset;
+	Elf32_Word	r_info; 
+} Elf32_Rela;
+</code></pre><p>We can see that r_info  used for determining the type of relocation.</p>
+<p><img src="../elfrealocimg/glibc.png" alt="info"></p>
+<p>The sections name for the relocations have the name: The most common .rel sections are: .rel.dyn which is a relocation entry for dynamic symbols, and .rel.plt which is a relocation entry for PLT meta-datarelname:</p>
+<p><img src="../elfrealocimg/rel.png" alt="symbol"></p>
+</div>
+    <div class="post__footer">
+      
+
+      
+    </div>
+
+    
+  </div>
+
+      </main>
+    </div><footer class="footer footer__base">
+  <ul class="footer__list">
+    <li class="footer__item">
+      &copy;
+      
+        S0S4
+        2024
+      
+    </li>
+    
+  </ul>
+</footer>
+  
+  <script
+    type="text/javascript"
+    src="/js/medium-zoom.min.1248fa75275e5ef0cbef27e8c1e27dc507c445ae3a2c7d2ed0be0809555dac64.js"
+    integrity="sha256-Ekj6dSdeXvDL7yfoweJ9xQfERa46LH0u0L4ICVVdrGQ="
+    crossorigin="anonymous"
+  ></script></body>
+</html>
