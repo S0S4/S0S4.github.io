@@ -5,19 +5,7 @@
     <link>https://s0s4.github.io/</link>
     <description>Recent content on S0S4 Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Thu, 29 Aug 2024 19:12:26 +0200</lastBuildDate><atom:link href="https://s0s4.github.io/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>ELF Relocations</title>
-      <link>https://s0s4.github.io/posts/elfrealoc/</link>
-      <pubDate>Thu, 29 Aug 2024 19:12:26 +0200</pubDate>
-      
-      <guid>https://s0s4.github.io/posts/elfrealoc/</guid>
-      
-        <description>In this post we&amp;rsquo;re going to explore how linkers do relocations, why this are needed, how ELF helps with this process among very other things.</description>
-      
-    </item>
-    
+    <language>en-us</language><atom:link href="https://s0s4.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title></title>
       <link>https://s0s4.github.io/about/</link>
